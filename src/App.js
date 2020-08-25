@@ -6,15 +6,32 @@ import {
   Card,
   CardContent,
 } from "@material-ui/core";
-import InfoBox from "./components/InfoBox/InfoBox";
-import Map from "./components/Map/Map";
+import InfoBox from "./components/Left_section/InfoBox";
+import Table from "./components/Right_section/Table";
+import { sortData } from "./components/Utils/util";
+import LineGraph from "./components/Right_section/LineGraph";
+import Map from "./components/Left_section/Map";
+import "leaflet/dist/leaflet.css";
+
 import "./App.css";
 
 function App() {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState({});
+  const [tableData, setTableData] = useState([]);
+  const [casesType, setCasesType] = useState("cases");
 
+  //worldwide, 전세계의 정보를 가져온다
+  useEffect(() => {
+    fetch("https://disease.sh/v3/covid-19/all")
+      .then((response) => response.json())
+      .then((data) => {
+        setCountryInfo(data);
+      });
+  }, []);
+
+  //각 나라별 데이터를 가져온다
   useEffect(() => {
     const getCountriesData = async () => {
       fetch("https://disease.sh/v3/covid-19/countries")
@@ -24,12 +41,16 @@ function App() {
             name: country.country, //KOREA, United State..
             value: country.countryInfo.iso3, //KOR, USA,
           }));
+
+          const sortedData = sortData(data);
+          setTableData(sortedData);
           setCountries(countries);
         });
     };
     getCountriesData();
   }, []);
 
+  //나라 변경시 각 나라별 데이터를 가져온다.
   const onCountryChange = async (e) => {
     const countryCode = e.target.value;
     setCountry(countryCode);
@@ -92,6 +113,7 @@ function App() {
         <div className="app__stats">
           {/* InfoBoxes title="Corona cases"*/}
           <InfoBox
+          onClick={(e) => setCasesType("cases")}
             title="Coronavirus Cases"
             cases={countryInfo.todayCases}
             total={countryInfo.cases}
@@ -99,6 +121,7 @@ function App() {
 
           {/* InfoBoxes title="Recovered"*/}
           <InfoBox
+          onClick={(e) => setCasesType("recovered")}
             title="Recovered"
             cases={countryInfo.todayRecovered}
             total={countryInfo.recovered}
@@ -106,6 +129,7 @@ function App() {
 
           {/* InfoBoxes title="Deaths"*/}
           <InfoBox
+          onClick={(e) => setCasesType("deaths")}
             title="Deaths"
             cases={countryInfo.todayDeaths}
             total={countryInfo.deaths}
@@ -122,9 +146,10 @@ function App() {
         <CardContent>
           {/* Table */}
           <h3>Live Cases by Country</h3>
-
+          <Table countries={tableData} />
           {/* Graph */}
-          <h3>Worldwide New cases</h3>
+          <h3>Worldwide New {casesType}</h3>
+          <LineGraph casesType={casesType}/>
         </CardContent>
       </Card>
     </div>

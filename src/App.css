@@ -9,6 +9,12 @@ body {
 .app{
   display: flex;
   justify-content: space-evenly;
+  background-color: #f5f6fa;
+  padding: 20px;
+}
+
+.app__dropdown {
+  background-color: white;
 }
 
 .app__header{
