@@ -17,10 +17,13 @@ import "./App.css";
 
 function App() {
   const [countries, setCountries] = useState([]);
-  const [country, setCountry] = useState("worldwide");
+  const [country, setInputCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
   const [casesType, setCasesType] = useState("cases");
+  const [mapCountries, setMapCountries] = useState([])
+  const [mapCenter, setMapCenter] = useState({ lat: 37, lng: 127.5 });
+  const [mapZoom, setMapZoom] = useState(6);
 
   //worldwide, 전세계의 정보를 가져온다
   useEffect(() => {
@@ -41,9 +44,9 @@ function App() {
             name: country.country, //KOREA, United State..
             value: country.countryInfo.iso3, //KOR, USA,
           }));
-
           const sortedData = sortData(data);
           setTableData(sortedData);
+          setMapCountries(data);
           setCountries(countries);
         });
     };
@@ -53,7 +56,6 @@ function App() {
   //나라 변경시 각 나라별 데이터를 가져온다.
   const onCountryChange = async (e) => {
     const countryCode = e.target.value;
-    setCountry(countryCode);
 
     const url =
       countryCode === "worldwide"
@@ -63,8 +65,11 @@ function App() {
     await fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        setCountry(countryCode);
+        setInputCountry(countryCode);
         setCountryInfo(data);
+
+        setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+        setMapZoom(5);
       });
   };
 
@@ -113,7 +118,7 @@ function App() {
         <div className="app__stats">
           {/* InfoBoxes title="Corona cases"*/}
           <InfoBox
-          onClick={(e) => setCasesType("cases")}
+            onClick={(e) => setCasesType("cases")}
             title="Coronavirus Cases"
             cases={countryInfo.todayCases}
             total={countryInfo.cases}
@@ -121,7 +126,7 @@ function App() {
 
           {/* InfoBoxes title="Recovered"*/}
           <InfoBox
-          onClick={(e) => setCasesType("recovered")}
+            onClick={(e) => setCasesType("recovered")}
             title="Recovered"
             cases={countryInfo.todayRecovered}
             total={countryInfo.recovered}
@@ -129,7 +134,7 @@ function App() {
 
           {/* InfoBoxes title="Deaths"*/}
           <InfoBox
-          onClick={(e) => setCasesType("deaths")}
+            onClick={(e) => setCasesType("deaths")}
             title="Deaths"
             cases={countryInfo.todayDeaths}
             total={countryInfo.deaths}
@@ -140,7 +145,7 @@ function App() {
         {/* Graph */}
 
         {/* Map */}
-        <Map />
+        <Map countries={mapCountries} center={mapCenter} zoom={mapZoom} />
       </div>
       <Card className="app__right">
         <CardContent>
@@ -149,7 +154,7 @@ function App() {
           <Table countries={tableData} />
           {/* Graph */}
           <h3>Worldwide New {casesType}</h3>
-          <LineGraph casesType={casesType}/>
+          <LineGraph casesType={casesType} />
         </CardContent>
       </Card>
     </div>
