@@ -23,6 +23,7 @@ const casesTypeColors = {
   },
 };
 
+//Table에서 확진자가 많은 수대로 정렬
 export const sortData = (data) => {
   const sortedData = [...data];
 
@@ -37,7 +38,10 @@ export const sortData = (data) => {
 //     }
 //   });
 
-//움직이는 원을 지도에 표시
+export const prettyPrintStat = (stat) =>
+  stat ? `+${numeral(stat).format("0.0a")}` : "+0";
+
+//각 나라마다 확진자 수에 따라 제곱이 되는 원을 지도에 표시하고 Popup창으로 설명
 export const showDataOnMap = (data, casesType = "cases") =>
   data.map((country) => (
     <Circle
@@ -48,5 +52,24 @@ export const showDataOnMap = (data, casesType = "cases") =>
       radius={
         Math.sqrt(country[casesType]) * casesTypeColors[casesType].multiplier
       }
-    ></Circle>
+    >
+      <Popup>
+        <div className="info-container">
+          <div
+            className="info-flag"
+            style={{ backgroundImage: `url(${country.countryInfo.flag})` }}
+          />
+          <div className="info-name">{country.country}</div>
+          <div className="info-confirmed">
+            Cases: {numeral(country.cases).format("0,0")}
+          </div>
+          <div className="info-recovered">
+            Recovered: {numeral(country.recovered).format("0,0")}
+          </div>
+          <div className="info-deaths">
+            Deaths: {numeral(country.deaths).format("0,0")}
+          </div>
+        </div>
+      </Popup>
+    </Circle>
   ));
