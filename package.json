@@ -16,8 +16,12 @@
     "react-chartjs-2": "^2.10.0",
     "react-dom": "^16.13.1",
     "react-leaflet": "^2.7.0",
+<<<<<<< HEAD
     "react-scripts": "3.4.3",
     "styled-components": "^5.1.1"
+=======
+    "react-scripts": "3.4.3"
+>>>>>>> cc63afaa54107f21266dc37472460edfafc2e5a4
   },
   "scripts": {
     "start": "react-scripts start",

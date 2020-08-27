@@ -15,13 +15,15 @@ import "leaflet/dist/leaflet.css";
 
 import "./App.css";
 
+import Theme from "./components/Utils/Theme";
+
 function App() {
   const [countries, setCountries] = useState([]);
   const [country, setInputCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
   const [casesType, setCasesType] = useState("cases");
-  const [mapCountries, setMapCountries] = useState([])
+  const [mapCountries, setMapCountries] = useState([]);
   const [mapCenter, setMapCenter] = useState({ lat: 37, lng: 127.5 });
   const [mapZoom, setMapZoom] = useState(6);
 
@@ -99,7 +101,7 @@ function App() {
         <div className="app__header">
           {/* Header */}
           <h1> Covid19 Tracker</h1>
-
+          <Theme />
           {/* Select input dropdown field */}
           <FormControl className="app__dropdown">
             <Select
@@ -140,10 +142,6 @@ function App() {
             total={countryInfo.deaths}
           />
         </div>
-
-        {/* Country Table */}
-        {/* Graph */}
-
         {/* Map */}
         <Map countries={mapCountries} center={mapCenter} zoom={mapZoom} />
       </div>
