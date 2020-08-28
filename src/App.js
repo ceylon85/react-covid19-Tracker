@@ -8,14 +8,13 @@ import {
 } from "@material-ui/core";
 import InfoBox from "./components/Left_section/InfoBox";
 import Table from "./components/Right_section/Table";
-import { sortData } from "./components/Utils/util";
+import { sortData, prettyPrintStat } from "./components/Utils/util";
 import LineGraph from "./components/Right_section/LineGraph";
 import Map from "./components/Left_section/Map";
-import "leaflet/dist/leaflet.css";
-
-import "./App.css";
-
 import Theme from "./components/Utils/Theme";
+
+import "leaflet/dist/leaflet.css";
+import "./App.css";
 
 function App() {
   const [countries, setCountries] = useState([]);
@@ -46,10 +45,10 @@ function App() {
             name: country.country, //KOREA, United State..
             value: country.countryInfo.iso3, //KOR, USA,
           }));
-          const sortedData = sortData(data);
-          setTableData(sortedData);
-          setMapCountries(data);
+          let sortedData = sortData(data);
           setCountries(countries);
+          setMapCountries(data);
+          setTableData(sortedData);
         });
     };
     getCountriesData();
@@ -69,38 +68,25 @@ function App() {
       .then((data) => {
         setInputCountry(countryCode);
         setCountryInfo(data);
-
-        setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
-        setMapZoom(5);
+        if (countryCode !== "worldwide") {
+          setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+          console.log(mapCenter);
+          setMapZoom(4);
+        } else {
+          setMapCenter({ lat: 37, lng: 127.5 });
+          setMapZoom(3);
+        }
       });
   };
 
   console.log("COUNTRY INFO ====>", countryInfo);
-  //QUICK FIX with little if else
-
-  // await fetch(url)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setCountry(countryCode);
-  //       setCountryInfo(data);
-  //       if(countryCode !== "worldwide"){
-  //         setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
-  //         console.log(mapCenter);
-  //         setMapZoom(4);
-  //       }
-  //       else{
-  //         console.log(mapCenter);
-  //         setMapCenter({lat: 34.80746, lng: -40.4796});
-  //         setMapZoom(3);
-  //       }
-  //     });
 
   return (
     <div className="app">
       <div className="app__left">
         <div className="app__header">
           {/* Header */}
-          <h1> Covid19 Tracker</h1>
+          <h1> COVID 19 TRACKER</h1>
           <Theme />
           {/* Select input dropdown field */}
           <FormControl className="app__dropdown">
@@ -122,39 +108,53 @@ function App() {
           <InfoBox
             onClick={(e) => setCasesType("cases")}
             title="Coronavirus Cases"
-            cases={countryInfo.todayCases}
-            total={countryInfo.cases}
+            cases={prettyPrintStat(countryInfo.todayCases)}
+            total={prettyPrintStat(countryInfo.cases)}
+            isRed
+            active={casesType === "cases"}
           />
 
           {/* InfoBoxes title="Recovered"*/}
           <InfoBox
             onClick={(e) => setCasesType("recovered")}
             title="Recovered"
-            cases={countryInfo.todayRecovered}
-            total={countryInfo.recovered}
+            cases={prettyPrintStat(countryInfo.todayRecovered)}
+            total={prettyPrintStat(countryInfo.recovered)}
+            active={casesType === "recovered"}
           />
 
           {/* InfoBoxes title="Deaths"*/}
           <InfoBox
             onClick={(e) => setCasesType("deaths")}
             title="Deaths"
-            cases={countryInfo.todayDeaths}
-            total={countryInfo.deaths}
+            cases={prettyPrintStat(countryInfo.todayDeaths)}
+            total={prettyPrintStat(countryInfo.deaths)}
+            isRed
+            active={casesType === "deaths"}
           />
         </div>
         {/* Map */}
-        <Map countries={mapCountries} center={mapCenter} zoom={mapZoom} />
+        <Map
+          casesType={casesType}
+          countries={mapCountries}
+          center={mapCenter}
+          zoom={mapZoom}
+        />
       </div>
-      <Card className="app__right">
+      <div className="app__right">
+      <Card>
         <CardContent>
           {/* Table */}
+          <div className="app__information">
           <h3>Live Cases by Country</h3>
           <Table countries={tableData} />
           {/* Graph */}
           <h3>Worldwide New {casesType}</h3>
-          <LineGraph casesType={casesType} />
+          <LineGraph className="app__graph" casesType={casesType}/>
+          </div>
         </CardContent>
       </Card>
+    </div>
     </div>
   );
 }
