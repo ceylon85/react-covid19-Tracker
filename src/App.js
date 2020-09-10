@@ -5,14 +5,12 @@ import {
   MenuItem,
   Card,
   CardContent,
-  Typography,
 } from "@material-ui/core";
 import InfoBox from "./components/Left_section/InfoBox";
 import Table from "./components/Right_section/Table";
 import { sortData, prettyPrintStat } from "./components/Utils/util";
 import LineGraph from "./components/Right_section/LineGraph";
 import Map from "./components/Left_section/Map";
-import GitHubIcon from '@material-ui/icons/GitHub';
 import "leaflet/dist/leaflet.css";
 import "./App.css";
 
@@ -87,7 +85,7 @@ function App() {
         <div className="app__header">
           {/* Header */}
           <h1> COVID 19 TRACKER</h1>
-         
+
           {/* Select input dropdown field */}
           <FormControl className="app__dropdown">
             <Select
@@ -142,21 +140,23 @@ function App() {
         />
       </div>
       <div className="app__right">
-      <Card>
-        <CardContent>
-          {/* Table */}
-          <div className="app__information">
-          <h3>Live Cases by Country</h3>
-          <Table countries={tableData} />
-          {/* Graph */}
-          <h3>Worldwide New <h3  style={{textTransform:'uppercase'}}>{casesType}</h3></h3>
-          <LineGraph casesType={casesType}/>
-          </div>
-        </CardContent>
-      </Card>
+        <Card>
+          <CardContent>
+            {/* Table */}
+            <div className="app__information">
+              <h3>Live Cases by Country</h3>
+              <Table countries={tableData} />
+              {/* Graph */}
+              <h3>
+                Worldwide New{" "}
+                <h3 style={{ textTransform: "uppercase" }}>{casesType}</h3>
+              </h3>
+              <LineGraph casesType={casesType} />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
-    </div>
-    
   );
 }
 
