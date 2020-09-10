@@ -7,7 +7,7 @@ function Table({ countries }) {
     <div className="table">
       {countries.map((country) => (
         <tr>
-          <td>{country.country}</td>
+          <td className="first__td">{country.country}</td>
           <td>
             <strong>{numeral(country.cases).format("0,0")}</strong>
           </td>

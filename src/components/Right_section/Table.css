@@ -17,7 +17,9 @@
     padding: 0.5rem;
     border: none;
 }
-
+.first__td{
+    cursor: pointer;
+}
 /* 홀수값의 tr만 색상지정 */
 .table tr:nth-of-type(odd){
     background-color: #f3f2f8;
